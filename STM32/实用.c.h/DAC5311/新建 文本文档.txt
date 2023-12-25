@@ -1,0 +1,23 @@
+void SPI_Send(uint16_t Data)
+{
+	int i ;
+	uint16_t Data_buf ;
+	Data_buf = Data;
+	HAL_GPIO_WritePin(GPIOA ,GPIO_PIN_5,GPIO_PIN_SET);//CLK to high
+	delay_us(1);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4,GPIO_PIN_RESET);//SYNC to low
+	for(i = 0; i < 16 ;i++)
+	{
+		if(Data_buf & 0x8000)
+			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6, GPIO_PIN_SET);//DlN to high
+		else
+			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_RESET); //DIN to low
+		delay_us(1);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_RESET);//CLK to low
+		delay_us(1);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_SET);//CLK to high
+		Data_buf= Data_buf << 1;
+	}
+		delay_us(1);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET) ; //SYNC to high
+}
